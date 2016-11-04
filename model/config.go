@@ -366,6 +366,7 @@ type TeamSettings struct {
 	MaxNotificationsPerChannel          *int64
 	TeammateNameDisplay                 *string
 	ExperimentalTownSquareIsReadOnly    *bool
+	DefaultTeamName                     *string
 }
 
 type ClientRequirements struct {

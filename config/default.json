@@ -76,7 +76,8 @@
         "MaxChannelsPerTeam": 2000,
         "MaxNotificationsPerChannel": 1000,
         "TeammateNameDisplay": "username",
-        "ExperimentalTownSquareIsReadOnly": false
+        "ExperimentalTownSquareIsReadOnly": false,
+        "DefaultTeamName": ""
     },
     "ClientRequirements": {
         "AndroidLatestVersion": "",
@@ -94,7 +95,7 @@
         "MaxIdleConns": 20,
         "MaxOpenConns": 300,
         "Trace": false,
-        "AtRestEncryptKey": "",
+        "AtRestEncryptKey": "h8g35teb496umbo6mi43rkh5xhs4nugd",
         "QueryTimeout": 30
     },
     "LogSettings": {
@@ -122,7 +123,7 @@
         "DriverName": "local",
         "Directory": "./data/",
         "EnablePublicLink": false,
-        "PublicLinkSalt": "",
+        "PublicLinkSalt": "ydp7b6f9yje8mb7ymqqscbhd987tmu17",
         "InitialFont": "luximbi.ttf",
         "AmazonS3AccessKeyId": "",
         "AmazonS3SecretAccessKey": "",
@@ -149,7 +150,7 @@
         "SMTPServer": "dockerhost",
         "SMTPPort": "2500",
         "ConnectionSecurity": "",
-        "InviteSalt": "",
+        "InviteSalt": "5u4a4ikdz49dqzijdbyxsrnod9cbk6d3",
         "SendPushNotifications": false,
         "PushNotificationServer": "",
         "PushNotificationContents": "generic",

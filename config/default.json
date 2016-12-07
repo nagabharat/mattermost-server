@@ -342,5 +342,8 @@
         "Directory": "./plugins",
         "Plugins": {},
         "PluginStates": {}
+    },
+    "UchatConfig": {
+        "EnableLocaleSetting": false
     }
 }

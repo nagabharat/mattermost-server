@@ -529,6 +529,10 @@ type PluginSettings struct {
 
 type ConfigFunc func() *Config
 
+type UchatConfig struct {
+	EnableLocaleSetting *bool
+}
+
 type Config struct {
 	ServiceSettings       ServiceSettings
 	TeamSettings          TeamSettings
@@ -559,6 +563,7 @@ type Config struct {
 	DataRetentionSettings DataRetentionSettings
 	JobSettings           JobSettings
 	PluginSettings        PluginSettings
+	UchatConfig           UchatConfig
 }
 
 func (o *Config) Clone() *Config {

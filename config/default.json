@@ -136,6 +136,8 @@
         "AmazonS3Trace": false
     },
     "EmailSettings": {
+        "EmailSignInHidden": true,
+        "UsernameSignInHidden": true,
         "EnableSignUpWithEmail": true,
         "EnableSignInWithEmail": true,
         "EnableSignInWithUsername": true,

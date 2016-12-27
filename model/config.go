@@ -288,6 +288,8 @@ type EmailSettings struct {
 	EnableSignUpWithEmail             bool
 	EnableSignInWithEmail             *bool
 	EnableSignInWithUsername          *bool
+	EmailSignInHidden                 *bool
+	UsernameSignInHidden              *bool
 	SendEmailNotifications            bool
 	RequireEmailVerification          bool
 	FeedbackName                      string
@@ -887,9 +889,18 @@ func (o *Config) SetDefaults() {
 		}
 	}
 
+	if o.EmailSettings.EmailSignInHidden == nil {
+		o.EmailSettings.EmailSignInHidden = new(bool)
+	}
+
 	if o.EmailSettings.EnableSignInWithUsername == nil {
 		o.EmailSettings.EnableSignInWithUsername = new(bool)
 		*o.EmailSettings.EnableSignInWithUsername = false
+	}
+
+	if o.EmailSettings.UsernameSignInHidden == nil {
+		o.EmailSettings.UsernameSignInHidden = new(bool)
+		*o.EmailSettings.UsernameSignInHidden = false
 	}
 
 	if o.EmailSettings.SendPushNotifications == nil {

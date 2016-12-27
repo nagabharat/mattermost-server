@@ -304,6 +304,8 @@ func trackConfig() {
 		"enable_sign_up_with_email":            utils.Cfg.EmailSettings.EnableSignUpWithEmail,
 		"enable_sign_in_with_email":            *utils.Cfg.EmailSettings.EnableSignInWithEmail,
 		"enable_sign_in_with_username":         *utils.Cfg.EmailSettings.EnableSignInWithUsername,
+		"email_sign_in_hidden":                 *utils.Cfg.EmailSettings.EmailSignInHidden,
+		"username_sign_in_hidden":              *utils.Cfg.EmailSettings.UsernameSignInHidden,
 		"require_email_verification":           utils.Cfg.EmailSettings.RequireEmailVerification,
 		"send_email_notifications":             utils.Cfg.EmailSettings.SendEmailNotifications,
 		"email_notification_contents_type":     *utils.Cfg.EmailSettings.EmailNotificationContentsType,

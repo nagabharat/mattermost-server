@@ -191,6 +191,7 @@ type ServiceSettings struct {
 	EnableUserTypingMessages                 *bool
 	EnableChannelViewedMessages              *bool
 	EnableUserStatuses                       *bool
+	EnableAuthenticationTransfer             *bool
 	ClusterLogTimeoutMilliseconds            *int
 }
 
@@ -1217,6 +1218,11 @@ func (o *Config) SetDefaults() {
 	if o.ServiceSettings.PostEditTimeLimit == nil {
 		o.ServiceSettings.PostEditTimeLimit = new(int)
 		*o.ServiceSettings.PostEditTimeLimit = 300
+	}
+
+	if o.ServiceSettings.EnableAuthenticationTransfer == nil {
+		o.ServiceSettings.EnableAuthenticationTransfer = new(bool)
+		*o.ServiceSettings.EnableAuthenticationTransfer = true
 	}
 
 	if o.ClusterSettings.Enable == nil {

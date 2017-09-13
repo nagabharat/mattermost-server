@@ -532,6 +532,7 @@ type ConfigFunc func() *Config
 
 type UchatConfig struct {
 	EnableLocaleSetting *bool
+	EnableTutorial      *bool
 }
 
 type Config struct {

@@ -345,6 +345,7 @@
         "PluginStates": {}
     },
     "UchatConfig": {
-        "EnableLocaleSetting": false
+        "EnableLocaleSetting": false,
+        "EnableTutorial": false
     }
 }

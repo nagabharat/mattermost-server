@@ -513,6 +513,7 @@ type PluginSettings struct {
 
 type UchatConfig struct {
 	EnableLocaleSetting *bool
+	EnableTutorial      *bool
 }
 
 type Config struct {

@@ -44,6 +44,7 @@ func InitAdmin() {
 	BaseRoutes.Admin.Handle("/saml_cert_status", ApiAdminSystemRequired(samlCertificateStatus)).Methods("GET")
 	BaseRoutes.Admin.Handle("/cluster_status", ApiAdminSystemRequired(getClusterStatus)).Methods("GET")
 	BaseRoutes.Admin.Handle("/recently_active_users/{team_id:[A-Za-z0-9]+}", ApiUserRequired(getRecentlyActiveUsers)).Methods("GET")
+	BaseRoutes.Admin.Handle("/users/update", ApiAdminSystemRequired(adminUpdateUser)).Methods("POST")
 }
 
 func getLogs(c *Context, w http.ResponseWriter, r *http.Request) {
@@ -421,5 +422,60 @@ func getRecentlyActiveUsers(c *Context, w http.ResponseWriter, r *http.Request) 
 		}
 
 		w.Write([]byte(model.UserMapToJson(profiles)))
+	}
+}
+
+func adminUpdateUser(c *Context, w http.ResponseWriter, r *http.Request) {
+	user := model.UserFromJson(r.Body)
+
+	if user == nil {
+		c.SetInvalidParam("updateUser", "user")
+		return
+	}
+
+	if !app.SessionHasPermissionToUser(c.Session, user.Id) {
+		return
+	}
+
+	if err := utils.IsPasswordValid(user.Password); user.Password != "" && err != nil {
+		c.Err = err
+		return
+	}
+
+	if result := <-app.Srv.Store.User().AdminUpdate(user, false); result.Err != nil {
+		c.Err = result.Err
+		return
+	} else {
+		c.LogAudit("")
+
+		rusers := result.Data.([2]*model.User)
+
+		if rusers[0].Email != rusers[1].Email {
+			go app.SendEmailChangeEmail(rusers[1].Email, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+
+			if utils.Cfg.EmailSettings.RequireEmailVerification {
+				go app.SendEmailChangeVerifyEmail(rusers[0].Id, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+			}
+		}
+
+		if rusers[0].Username != rusers[1].Username {
+			go app.SendChangeUsernameEmail(rusers[1].Username, rusers[0].Username, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+		}
+
+		app.InvalidateCacheForUser(user.Id)
+
+		updatedUser := rusers[0]
+		updatedUser = sanitizeProfile(c, updatedUser)
+
+		omitUsers := make(map[string]bool, 1)
+		omitUsers[user.Id] = true
+		message := model.NewWebSocketEvent(model.WEBSOCKET_EVENT_USER_UPDATED, "", "", "", omitUsers)
+		message.Add("user", updatedUser)
+		go app.Publish(message)
+
+		rusers[0].Password = ""
+		rusers[0].AuthData = new(string)
+		*rusers[0].AuthData = ""
+		w.Write([]byte(rusers[0].ToJson()))
 	}
 }

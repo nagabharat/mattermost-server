@@ -205,6 +205,81 @@ func (us SqlUserStore) Update(user *model.User, trustedUpdateData bool) StoreCha
 	return storeChannel
 }
 
+func (us SqlUserStore) AdminUpdate(user *model.User, trustedUpdateData bool) StoreChannel {
+
+	storeChannel := make(StoreChannel, 1)
+
+	go func() {
+		result := StoreResult{}
+
+		user.PreUpdate()
+
+		if result.Err = user.IsValid(); result.Err != nil {
+			storeChannel <- result
+			close(storeChannel)
+			return
+		}
+
+		if oldUserResult, err := us.GetMaster().Get(model.User{}, user.Id); err != nil {
+			result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.finding.app_error", nil, "user_id="+user.Id+", "+err.Error())
+		} else if oldUserResult == nil {
+			result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.find.app_error", nil, "user_id="+user.Id)
+		} else {
+			oldUser := oldUserResult.(*model.User)
+			user.CreateAt = oldUser.CreateAt
+			user.Password = oldUser.Password
+			user.LastPasswordUpdate = oldUser.LastPasswordUpdate
+			user.LastPictureUpdate = oldUser.LastPictureUpdate
+			user.EmailVerified = oldUser.EmailVerified
+			user.FailedAttempts = oldUser.FailedAttempts
+			user.MfaSecret = oldUser.MfaSecret
+			user.MfaActive = oldUser.MfaActive
+
+			if !trustedUpdateData {
+				user.Roles = oldUser.Roles
+				user.DeleteAt = oldUser.DeleteAt
+			}
+
+			if user.IsOAuthUser() {
+				user.Email = oldUser.Email
+			} else if user.IsLDAPUser() && !trustedUpdateData {
+				if user.Username != oldUser.Username ||
+					user.Email != oldUser.Email {
+					result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.can_not_change_ldap.app_error", nil, "user_id="+user.Id)
+					storeChannel <- result
+					close(storeChannel)
+					return
+				}
+			} else if user.Email != oldUser.Email {
+				user.EmailVerified = false
+			}
+
+			if user.Username != oldUser.Username {
+				user.UpdateMentionKeysFromUsername(oldUser.Username)
+			}
+
+			if count, err := us.GetMaster().Update(user); err != nil {
+				if IsUniqueConstraintError(err.Error(), []string{"Email", "users_email_key", "idx_users_email_unique"}) {
+					result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.email_taken.app_error", nil, "user_id="+user.Id+", "+err.Error())
+				} else if IsUniqueConstraintError(err.Error(), []string{"Username", "users_username_key", "idx_users_username_unique"}) {
+					result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.username_taken.app_error", nil, "user_id="+user.Id+", "+err.Error())
+				} else {
+					result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.updating.app_error", nil, "user_id="+user.Id+", "+err.Error())
+				}
+			} else if count != 1 {
+				result.Err = model.NewLocAppError("SqlUserStore.Update", "store.sql_user.update.app_error", nil, fmt.Sprintf("user_id=%v, count=%v", user.Id, count))
+			} else {
+				result.Data = [2]*model.User{user, oldUser}
+			}
+		}
+
+		storeChannel <- result
+		close(storeChannel)
+	}()
+
+	return storeChannel
+}
+
 func (us SqlUserStore) UpdateLastPictureUpdate(userId string) StoreChannel {
 	storeChannel := make(StoreChannel, 1)
 

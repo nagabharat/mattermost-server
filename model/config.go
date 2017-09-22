@@ -138,6 +138,7 @@ const (
 	ELASTICSEARCH_SETTINGS_DEFAULT_POST_INDEX_SHARDS               = 1
 	ELASTICSEARCH_SETTINGS_DEFAULT_AGGREGATE_POSTS_AFTER_DAYS      = 365
 	ELASTICSEARCH_SETTINGS_DEFAULT_POSTS_AGGREGATOR_JOB_START_TIME = "03:00"
+	ELASTICSEARCH_SETTINGS_DEFAULT_INDEX_PREFIX                    = ""
 )
 
 type ServiceSettings struct {
@@ -482,6 +483,7 @@ type ElasticsearchSettings struct {
 	PostIndexShards             *int
 	AggregatePostsAfterDays     *int
 	PostsAggregatorJobStartTime *string
+	IndexPrefix                 *string
 }
 
 type DataRetentionSettings struct {
@@ -1578,6 +1580,11 @@ func (o *Config) SetDefaults() {
 	if o.ElasticsearchSettings.PostsAggregatorJobStartTime == nil {
 		o.ElasticsearchSettings.PostsAggregatorJobStartTime = new(string)
 		*o.ElasticsearchSettings.PostsAggregatorJobStartTime = ELASTICSEARCH_SETTINGS_DEFAULT_POSTS_AGGREGATOR_JOB_START_TIME
+	}
+
+	if o.ElasticsearchSettings.IndexPrefix == nil {
+		o.ElasticsearchSettings.IndexPrefix = new(string)
+		*o.ElasticsearchSettings.IndexPrefix = ELASTICSEARCH_SETTINGS_DEFAULT_INDEX_PREFIX
 	}
 
 	if o.DataRetentionSettings.Enable == nil {

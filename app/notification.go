@@ -352,7 +352,7 @@ func (a *App) sendNotificationEmail(post *model.Post, user *model.User, channel 
 	if channel.Type == model.CHANNEL_DIRECT {
 		subjectText = getDirectMessageNotificationEmailSubject(post, translateFunc, a.Config().TeamSettings.SiteName, senderName)
 	} else {
-		subjectText = getNotificationEmailSubject(post, translateFunc, a.Config().TeamSettings.SiteName, team.DisplayName)
+		subjectText = getNotificationEmailSubject(post, translateFunc, a.Config().TeamSettings.SiteName, channel.DisplayName)
 	}
 
 	emailNotificationContentsType := model.EMAIL_NOTIFICATION_CONTENTS_FULL

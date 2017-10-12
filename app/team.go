@@ -269,7 +269,11 @@ func AddUserToTeamByInviteId(inviteId string, userId string) (*model.Team, *mode
 	return team, nil
 }
 
-func joinUserToTeam(team *model.Team, user *model.User) (bool, *model.AppError) {
+// Returns three values:
+// 1. a pointer to the team member, if successful
+// 2. a boolean: true if the user has a non-deleted team member for that team already, otherwise false.
+// 3. a pointer to an AppError if something went wrong.
+func joinUserToTeam(team *model.Team, user *model.User) (*model.TeamMember, bool, *model.AppError) {
 	tm := &model.TeamMember{
 		TeamId: team.Id,
 		UserId: user.Id,
@@ -281,29 +285,31 @@ func joinUserToTeam(team *model.Team, user *model.User) (bool, *model.AppError) 
 	}
 
 	if etmr := <-Srv.Store.Team().GetMember(team.Id, user.Id); etmr.Err == nil {
-		// Membership alredy exists.  Check if deleted and and update, otherwise do nothing
+		// Membership already exists.  Check if deleted and and update, otherwise do nothing
 		rtm := etmr.Data.(*model.TeamMember)
 
 		// Do nothing if already added
 		if rtm.DeleteAt == 0 {
-			return true, nil
+			return rtm, true, nil
 		}
 
 		if tmr := <-Srv.Store.Team().UpdateMember(tm); tmr.Err != nil {
-			return false, tmr.Err
+			return nil, false, tmr.Err
+		} else {
+			return tmr.Data.(*model.TeamMember), false, nil
 		}
 	} else {
 		// Membership appears to be missing.  Lets try to add.
 		if tmr := <-Srv.Store.Team().SaveMember(tm); tmr.Err != nil {
-			return false, tmr.Err
+			return nil, false, tmr.Err
+		} else {
+			return tmr.Data.(*model.TeamMember), false, nil
 		}
 	}
-
-	return false, nil
 }
 
 func JoinUserToTeam(team *model.Team, user *model.User, userRequestorId string) *model.AppError {
-	if alreadyAdded, err := joinUserToTeam(team, user); err != nil {
+	if _, alreadyAdded, err := joinUserToTeam(team, user); err != nil {
 		return err
 	} else if alreadyAdded {
 		return nil

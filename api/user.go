@@ -1141,6 +1141,7 @@ func loginWithSaml(c *Context, w http.ResponseWriter, r *http.Request) {
 					}, 5000);
 					console.log("After timeout")
 					console.log(token)
+					console.log(window);
 				});
 			</script>
 			</head>

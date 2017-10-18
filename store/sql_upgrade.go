@@ -53,7 +53,7 @@ func UpgradeDatabase(sqlStore SqlStore) {
 	UpgradeDatabaseToVersion310(sqlStore)
 	UpgradeDatabaseToVersion40(sqlStore)
 	UpgradeDatabaseToVersion41(sqlStore)
-	UpgradeDatabaseToVersion42(sqlStore)
+	//UpgradeDatabaseToVersion42(sqlStore)
 
 	// If the SchemaVersion is empty this this is the first time it has ran
 	// so lets set it to the current version.

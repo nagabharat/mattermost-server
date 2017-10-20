@@ -1665,6 +1665,8 @@ func TestPostStoreGetPostsBatchForIndexing(t *testing.T) {
 }
 
 func TestPostStoreGetOldest(t *testing.T) {
+	Setup()
+
 	o0 := &model.Post{}
 	o0.ChannelId = model.NewId()
 	o0.UserId = model.NewId()
@@ -1680,7 +1682,6 @@ func TestPostStoreGetOldest(t *testing.T) {
 	o1 = (<-store.Post().Save(o1)).Data.(*model.Post)
 
 	o2 := &model.Post{}
-	o2.Id = model.NewId()
 	o2.ChannelId = o1.ChannelId
 	o2.UserId = model.NewId()
 	o2.Message = "zz" + model.NewId() + "b"

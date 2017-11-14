@@ -39,7 +39,7 @@ func (a *App) TestLdap() *model.AppError {
 }
 
 func (a *App) SwitchEmailToLdap(email, password, code, ldapId, ldapPassword string) (string, *model.AppError) {
-	if !*utils.Cfg.ServiceSettings.EnableAuthenticationTransfer {
+	if !*a.Config().ServiceSettings.EnableAuthenticationTransfer {
 		return "", model.NewAppError("emailToLdap", "api.user.email_to_ldap.not_available.app_error", nil, "", http.StatusForbidden)
 	}
 	user, err := a.GetUserByEmail(email)
@@ -74,7 +74,7 @@ func (a *App) SwitchEmailToLdap(email, password, code, ldapId, ldapPassword stri
 }
 
 func (a *App) SwitchLdapToEmail(ldapPassword, code, email, newPassword string) (string, *model.AppError) {
-	if !*utils.Cfg.ServiceSettings.EnableAuthenticationTransfer {
+	if !*a.Config().ServiceSettings.EnableAuthenticationTransfer {
 		return "", model.NewAppError("ldapToEmail", "api.user.ldap_to_email.not_available.app_error", nil, "", http.StatusForbidden)
 	}
 

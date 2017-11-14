@@ -450,15 +450,25 @@ func adminUpdateUser(c *Context, w http.ResponseWriter, r *http.Request) {
 		rusers := result.Data.([2]*model.User)
 
 		if rusers[0].Email != rusers[1].Email {
-			go app.SendEmailChangeEmail(rusers[1].Email, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+			c.App.Go(func() {
+				if err := c.App.SendEmailChangeEmail(rusers[1].Email, rusers[0].Email, rusers[0].Locale, utils.GetSiteURL()); err != nil {
+					l4g.Error(err.Error())
+				}
+			})
 
-			if utils.Cfg.EmailSettings.RequireEmailVerification {
-				go app.SendEmailChangeVerifyEmail(rusers[0].Id, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+			if c.App.Config().EmailSettings.RequireEmailVerification {
+				if err := c.App.SendEmailVerification(rusers[0]); err != nil {
+					l4g.Error(err.Error())
+				}
 			}
 		}
 
 		if rusers[0].Username != rusers[1].Username {
-			go app.SendChangeUsernameEmail(rusers[1].Username, rusers[0].Username, rusers[0].Email, rusers[0].Locale, c.GetSiteURLHeader())
+			c.App.Go(func() {
+				if err := c.App.SendChangeUsernameEmail(rusers[1].Username, rusers[0].Username, rusers[0].Email, rusers[0].Locale, utils.GetSiteURL()); err != nil {
+					l4g.Error(err.Error())
+				}
+			})
 		}
 
 		c.App.InvalidateCacheForUser(user.Id)

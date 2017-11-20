@@ -295,6 +295,7 @@ type EmailSettings struct {
 	EnableSignUpWithEmail             bool
 	EnableSignInWithEmail             *bool
 	EnableSignInWithUsername          *bool
+	EnableSignInWithEmailFromWebhook  *bool
 	SendEmailNotifications            bool
 	RequireEmailVerification          bool
 	FeedbackName                      string
@@ -863,6 +864,11 @@ func (o *Config) SetDefaults() {
 
 	if o.EmailSettings.EnableSignInWithUsername == nil {
 		o.EmailSettings.EnableSignInWithUsername = NewBool(false)
+	}
+
+	if o.EmailSettings.EnableSignInWithEmailFromWebhook == nil {
+		o.EmailSettings.EnableSignInWithEmailFromWebhook = new(bool)
+		*o.EmailSettings.EnableSignInWithEmailFromWebhook = false
 	}
 
 	if o.EmailSettings.SendPushNotifications == nil {

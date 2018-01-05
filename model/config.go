@@ -940,7 +940,7 @@ type TeamSettings struct {
 	EnableConfirmNotificationsToChannel *bool
 	TeammateNameDisplay                 *string
 	ExperimentalTownSquareIsReadOnly    *bool
-	DefaultTeamName                     *string
+	ExperimentalPrimaryTeam             *string
 }
 
 func (s *TeamSettings) SetDefaults() {
@@ -1035,6 +1035,10 @@ func (s *TeamSettings) SetDefaults() {
 
 	if s.ExperimentalTownSquareIsReadOnly == nil {
 		s.ExperimentalTownSquareIsReadOnly = NewBool(false)
+	}
+
+	if s.ExperimentalPrimaryTeam == nil {
+		s.ExperimentalPrimaryTeam = NewString("")
 	}
 }
 

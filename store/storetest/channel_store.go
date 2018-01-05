@@ -1764,6 +1764,14 @@ func testChannelStoreSearchMore(t *testing.T, ss store.Store) {
 	o8.Type = model.CHANNEL_PRIVATE
 	store.Must(ss.Channel().Save(&o8, -1))
 
+	o9 := model.Channel{}
+	o9.TeamId = o1.TeamId
+	o9.DisplayName = "Channel With Purpose"
+	o9.Purpose = "This can now be searchable!"
+	o9.Name = "with-purpose"
+	o9.Type = model.CHANNEL_OPEN
+	store.Must(ss.Channel().Save(&o9, -1))
+
 	if result := <-ss.Channel().SearchMore(m1.UserId, o1.TeamId, "ChannelA"); result.Err != nil {
 		t.Fatal(result.Err)
 	} else {
@@ -1825,6 +1833,19 @@ func testChannelStoreSearchMore(t *testing.T, ss store.Store) {
 		}
 
 		if (*channels)[0].Name != o6.Name {
+			t.Fatal("wrong channel returned")
+		}
+	}
+
+	if result := <-ss.Channel().SearchMore(m1.UserId, o1.TeamId, "now searchable"); result.Err != nil {
+		t.Fatal(result.Err)
+	} else {
+		channels := result.Data.(*model.ChannelList)
+		if len(*channels) != 1 {
+			t.Fatal("should return 1 channel")
+		}
+
+		if (*channels)[0].Name != o9.Name {
 			t.Fatal("wrong channel returned")
 		}
 	}
@@ -1940,6 +1961,14 @@ func testChannelStoreSearchInTeam(t *testing.T, ss store.Store) {
 	o11.Type = model.CHANNEL_OPEN
 	store.Must(ss.Channel().Save(&o11, -1))
 
+	o12 := model.Channel{}
+	o12.TeamId = o1.TeamId
+	o12.DisplayName = "Channel With Purpose"
+	o12.Purpose = "This can now be searchable!"
+	o12.Name = "with-purpose"
+	o12.Type = model.CHANNEL_OPEN
+	store.Must(ss.Channel().Save(&o12, -1))
+
 	if result := <-ss.Channel().SearchInTeam(o1.TeamId, "ChannelA"); result.Err != nil {
 		t.Fatal(result.Err)
 	} else {
@@ -2048,6 +2077,19 @@ func testChannelStoreSearchInTeam(t *testing.T, ss store.Store) {
 		}
 
 		if (*channels)[0].Name != o11.Name {
+			t.Fatal("wrong channel returned")
+		}
+	}
+
+	if result := <-ss.Channel().SearchInTeam(o1.TeamId, "now searchable"); result.Err != nil {
+		t.Fatal(result.Err)
+	} else {
+		channels := result.Data.(*model.ChannelList)
+		if len(*channels) != 1 {
+			t.Fatal("should return 1 channel")
+		}
+
+		if (*channels)[0].Name != o12.Name {
 			t.Fatal("wrong channel returned")
 		}
 	}

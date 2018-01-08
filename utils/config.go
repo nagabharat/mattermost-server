@@ -443,6 +443,7 @@ func GenerateClientConfig(c *model.Config, diagnosticId string) map[string]strin
 	props["AppDownloadLink"] = *c.NativeAppSettings.AppDownloadLink
 	props["AndroidAppDownloadLink"] = *c.NativeAppSettings.AndroidAppDownloadLink
 	props["IosAppDownloadLink"] = *c.NativeAppSettings.IosAppDownloadLink
+	props["IosAppUrlScheme"] = *c.NativeAppSettings.IosAppUrlScheme
 
 	props["EnableWebrtc"] = strconv.FormatBool(*c.WebrtcSettings.Enable)
 

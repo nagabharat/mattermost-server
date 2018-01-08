@@ -1398,6 +1398,7 @@ type NativeAppSettings struct {
 	AppDownloadLink        *string
 	AndroidAppDownloadLink *string
 	IosAppDownloadLink     *string
+	IosAppUrlScheme        *string
 }
 
 func (s *NativeAppSettings) SetDefaults() {

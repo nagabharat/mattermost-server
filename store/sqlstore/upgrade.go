@@ -350,7 +350,7 @@ func UpgradeDatabaseToVersion47(sqlStore SqlStore) {
 		sqlStore.AlterColumnTypeIfExists("OAuthAuthData", "State", "varchar(1024)", "varchar(1024)")
 		sqlStore.RemoveColumnIfExists("ChannelMemberHistory", "Email")
 		sqlStore.RemoveColumnIfExists("ChannelMemberHistory", "Username")
-		saveSchemaVersion(sqlStore, VERSION_4_7_0)
+		//saveSchemaVersion(sqlStore, VERSION_4_7_0)
 	}
 }
 
@@ -360,12 +360,12 @@ func UpgradeDatabaseToVersion47(sqlStore SqlStore) {
 func UpgradeDatabaseToVersion471(sqlStore SqlStore) {
 	if shouldPerformUpgrade(sqlStore, VERSION_4_7_0, VERSION_4_7_1) {
 		sqlStore.RemoveColumnIfExists("ChannelMemberHistory", "Email")
-		saveSchemaVersion(sqlStore, VERSION_4_7_1)
+		//saveSchemaVersion(sqlStore, VERSION_4_7_1)
 	}
 }
 
 func UpgradeDatabaseToVersion48(sqlStore SqlStore) {
 	if shouldPerformUpgrade(sqlStore, VERSION_4_7_1, VERSION_4_8_0) {
-		saveSchemaVersion(sqlStore, VERSION_4_8_0)
+		//saveSchemaVersion(sqlStore, VERSION_4_8_0)
 	}
 }
